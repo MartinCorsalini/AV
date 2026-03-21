@@ -1,0 +1,204 @@
+<div class="detail-container">
+
+  <header class="detail-header">
+    <div class="header-left">
+      <p-button icon="pi pi-arrow-left" severity="secondary" size="small" (onClick)="volver()" />
+      <h1>◈ {{ avId.toUpperCase() }} — ETH SHORT</h1>
+    </div>
+    <div class="eth-price">
+      <span class="eth-label">ETH/USDT</span>
+      <span class="eth-value">{{ ethPrice | number:'1.2-2' }}</span>
+    </div>
+  </header>
+
+  <!-- PANEL SUPERIOR -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">CAPITAL</span>
+      <span class="stat-value">{{ config.capital | number:'1.2-2' }} USDT</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">CAPITAL RESTANTE</span>
+      <span class="stat-value">{{ capitalRestante | number:'1.2-2' }} USDT</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">BALAS RESTANTES</span>
+      <span class="stat-value">{{ balasRestantes }} / {{ config.balas }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">USDT INVERTIDO</span>
+      <span class="stat-value">{{ totalUsdtInvertido | number:'1.2-2' }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">TAMAÑO</span>
+      <span class="stat-value">{{ tamano | number:'1.2-2' }} USDT</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">PALANCA</span>
+      <span class="stat-value">x{{ config.palanca }}</span>
+    </div>
+    <div class="stat-card highlight">
+      <span class="stat-label">PPC OPERACIÓN</span>
+      <span class="stat-value">{{ config.ppc > 0 ? (config.ppc | number:'1.2-2') : (ppcCalculado | number:'1.2-2') }}</span>
+    </div>
+    <div class="stat-card highlight">
+      <span class="stat-label">TP 17%</span>
+      <span class="stat-value">{{ tp | number:'1.2-2' }}</span>
+    </div>
+    <div class="stat-card highlight">
+      <span class="stat-label">LIQUIDACIÓN</span>
+      <span class="stat-value danger">{{ liquidacion | number:'1.2-2' }}</span>
+    </div>
+    <div class="stat-card" [class]="getPnlClass(porcentaje)">
+      <span class="stat-label">% EN CURSO</span>
+      <span class="stat-value">{{ porcentaje | percent:'1.2-2' }}</span>
+    </div>
+    <div class="stat-card" [class]="getPnlClass(gp)">
+      <span class="stat-label">G/P EN CURSO</span>
+      <span class="stat-value">{{ gp | number:'1.2-2' }} USDT</span>
+    </div>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="actions">
+    <p-button label="⚙ CONFIGURAR AV" severity="secondary" (onClick)="showDialogConfig = true" />
+    <p-button label="+ BALA INGRESADA" severity="success" (onClick)="showDialogIngresada = true" />
+    <p-button label="- BALA RETIRADA" severity="danger" (onClick)="showDialogRetirada = true" />
+  </div>
+
+  <!-- TABLAS -->
+  <div class="tables-grid">
+    <div class="table-section">
+      <h3>BALAS INGRESADAS</h3>
+      <p-table [value]="balasIngresadas" [scrollable]="true" scrollHeight="300px">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>HORA</th>
+            <th>FECHA</th>
+            <th>BALAS</th>
+            <th>USDT</th>
+            <th>PRECIO COMPRA</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-bala>
+          <tr>
+            <td>{{ bala.hora }}</td>
+            <td>{{ bala.fecha }}</td>
+            <td>{{ bala.balas }}</td>
+            <td>{{ bala.usdt | number:'1.2-2' }}</td>
+            <td>{{ bala.precioCompra | number:'1.2-2' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="table-section">
+      <h3>BALAS RETIRADAS</h3>
+      <p-table [value]="balasRetiradas" [scrollable]="true" scrollHeight="300px">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>HORA</th>
+            <th>FECHA</th>
+            <th>BALAS</th>
+            <th>USDT</th>
+            <th>PRECIO VENTA</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-bala>
+          <tr>
+            <td>{{ bala.hora }}</td>
+            <td>{{ bala.fecha }}</td>
+            <td>{{ bala.balas }}</td>
+            <td>{{ bala.usdt | number:'1.2-2' }}</td>
+            <td>{{ bala.precioVenta | number:'1.2-2' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIGURAR -->
+  @if (showDialogConfig) {
+    <div class="modal-overlay" (click)="showDialogConfig = false">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>CONFIGURAR AV</h3>
+        <div class="dialog-form">
+          <div class="field">
+            <label>CAPITAL (USDT)</label>
+            <p-inputNumber [(ngModel)]="config.capital" [minFractionDigits]="2" />
+          </div>
+          <div class="field">
+            <label>BALAS TOTALES</label>
+            <p-inputNumber [(ngModel)]="config.balas" />
+          </div>
+          <div class="field">
+            <label>PALANCA</label>
+            <p-inputNumber [(ngModel)]="config.palanca" />
+          </div>
+          <div class="field">
+            <label>PPC MANUAL (0 = automático)</label>
+            <p-inputNumber [(ngModel)]="config.ppc" [minFractionDigits]="2" />
+          </div>
+          <p-button label="GUARDAR" (onClick)="guardarConfig()" styleClass="w-full" />
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL BALA INGRESADA -->
+  @if (showDialogIngresada) {
+    <div class="modal-overlay" (click)="showDialogIngresada = false">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>AGREGAR BALA INGRESADA</h3>
+        <div class="dialog-form">
+          <div class="field">
+            <label>HORA</label>
+            <input pInputText [(ngModel)]="nuevaBala.hora" placeholder="10:30" />
+          </div>
+          <div class="field">
+            <label>FECHA</label>
+            <input pInputText [(ngModel)]="nuevaBala.fecha" placeholder="09/03/2026" />
+          </div>
+          <div class="field">
+            <label>BALAS</label>
+            <p-inputNumber [(ngModel)]="nuevaBala.balas" />
+          </div>
+          <div class="field">
+            <label>PRECIO DE COMPRA</label>
+            <p-inputNumber [(ngModel)]="nuevaBala.precioCompra" [minFractionDigits]="2" />
+          </div>
+          <p-button label="AGREGAR" severity="success" (onClick)="agregarBalaIngresada()" styleClass="w-full" />
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL BALA RETIRADA -->
+  @if (showDialogRetirada) {
+    <div class="modal-overlay" (click)="showDialogRetirada = false">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>AGREGAR BALA RETIRADA</h3>
+        <div class="dialog-form">
+          <div class="field">
+            <label>HORA</label>
+            <input pInputText [(ngModel)]="nuevaRetirada.hora" placeholder="11:20" />
+          </div>
+          <div class="field">
+            <label>FECHA</label>
+            <input pInputText [(ngModel)]="nuevaRetirada.fecha" placeholder="10/03/2026" />
+          </div>
+          <div class="field">
+            <label>BALAS</label>
+            <p-inputNumber [(ngModel)]="nuevaRetirada.balas" />
+          </div>
+          <div class="field">
+            <label>PRECIO DE VENTA</label>
+            <p-inputNumber [(ngModel)]="nuevaRetirada.precioVenta" [minFractionDigits]="2" />
+          </div>
+          <p-button label="AGREGAR" severity="danger" (onClick)="agregarBalaRetirada()" styleClass="w-full" />
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

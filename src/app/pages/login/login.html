@@ -1,0 +1,41 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>◈ AV TRADING</h1>
+      <p>ETH SHORT DASHBOARD</p>
+    </div>
+
+    <div class="login-form">
+      <div class="field">
+        <label>EMAIL</label>
+        <input
+          pInputText
+          type="email"
+          [(ngModel)]="email"
+          placeholder="tu@email.com"
+        />
+      </div>
+
+      <div class="field">
+        <label>CONTRASEÑA</label>
+        <p-password
+          [(ngModel)]="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          placeholder="••••••••"
+        />
+      </div>
+
+      @if (error) {
+        <p-message severity="error" [text]="error" />
+      }
+
+      <p-button
+        label="INGRESAR"
+        [loading]="loading"
+        (onClick)="login()"
+        styleClass="w-full"
+      />
+    </div>
+  </div>
+</div>
