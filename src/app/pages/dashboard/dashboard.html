@@ -10,16 +10,13 @@
           <span class="text-[#666] text-xs uppercase tracking-widest">Dashboard</span>
         </div>
         <div class="flex items-center gap-4">
-          <div class="flex items-center gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2">
-            <span class="text-[#666] text-xs">ETH/USDT</span>
-            <span class="font-mono font-semibold text-sm" [class]="priceUp ? 'text-green-400' : 'text-red-400'">
-              {{ ethPrice | number:'1.2-2' }}
-            </span>
-            <span class="text-xs" [class]="priceUp ? 'text-green-400' : 'text-red-400'">
-              {{ priceUp ? '▲' : '▼' }}
-            </span>
-          </div>
           <span class="text-[#666] text-sm">{{ nombreUsuario }}</span>
+          <button
+            (click)="goToMarkets()"
+            class="text-[#666] hover:text-white text-sm transition-colors px-3 py-2 rounded-lg hover:bg-[#1a1a1a]"
+          >
+            Mercados
+          </button>
           <button
             (click)="logout()"
             class="text-[#666] hover:text-white text-sm transition-colors px-3 py-2 rounded-lg hover:bg-[#1a1a1a]"
@@ -39,56 +36,56 @@
       <p class="text-[#666] text-sm mt-1">Hacé clic en una tarjeta para ver el detalle</p>
     </div>
 
-    <!-- CARDS AVs -->
+    <!-- CARDS -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      @for (av of avs; track av.id) {
+      @for (strategy of strategies; track strategy.id) {
         <div
-          (click)="goToAv(av.id)"
+          (click)="goToStrategy(strategy.id)"
           class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-6 cursor-pointer hover:border-[#3a3a3a] hover:bg-[#1f1f1f] transition-all duration-200 group"
         >
-          <!-- Header -->
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h3 class="text-white font-semibold text-lg">{{ av.nombre }}</h3>
-              <span class="text-[#666] text-xs uppercase tracking-widest">ETH Short</span>
+              <h3 class="text-white font-semibold text-lg">{{ strategy.nombre }}</h3>
+              <span class="text-[#666] text-xs uppercase tracking-widest">{{ strategy.tipo }}</span>
             </div>
-            <span class="text-xs px-2 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
-              SHORT
+            <span class="text-xs px-2 py-1 rounded-lg"
+              [class]="strategy.tipo.includes('Short') ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20'">
+              {{ strategy.tipo.includes('Short') ? 'SHORT' : strategy.tipo.includes('Long') ? 'LONG' : 'FLEX' }}
             </span>
           </div>
 
-          <!-- Stats -->
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
               <p class="text-[#555] text-xs uppercase tracking-widest mb-1">Capital</p>
-              <p class="text-white font-mono text-sm font-medium">{{ av.capital | number:'1.2-2' }} <span class="text-[#555] text-xs">USDT</span></p>
+              <p class="text-white font-mono text-sm font-medium">{{ strategy.capital | number:'1.2-2' }} <span class="text-[#555] text-xs">USDT</span></p>
             </div>
             <div>
               <p class="text-[#555] text-xs uppercase tracking-widest mb-1">Restante</p>
-              <p class="text-white font-mono text-sm font-medium">{{ av.capitalRestante | number:'1.2-2' }} <span class="text-[#555] text-xs">USDT</span></p>
+              <p class="text-white font-mono text-sm font-medium">{{ strategy.capitalRestante | number:'1.2-2' }} <span class="text-[#555] text-xs">USDT</span></p>
             </div>
             <div>
               <p class="text-[#555] text-xs uppercase tracking-widest mb-1">PPC</p>
-              <p class="text-white font-mono text-sm font-medium">{{ av.ppc | number:'1.2-2' }}</p>
+              <p class="text-white font-mono text-sm font-medium">{{ strategy.ppc | number:'1.2-2' }}</p>
             </div>
             <div>
               <p class="text-[#555] text-xs uppercase tracking-widest mb-1">Balas</p>
-              <p class="text-white font-mono text-sm font-medium">{{ av.balasRestantes }}</p>
+              <p class="text-white font-mono text-sm font-medium">{{ strategy.balasRestantes }}</p>
             </div>
           </div>
 
-          <!-- PnL -->
           <div class="border-t border-[#2a2a2a] pt-4 grid grid-cols-2 gap-4">
             <div>
               <p class="text-[#555] text-xs uppercase tracking-widest mb-1">% en curso</p>
-              <p class="font-mono text-sm font-semibold" [class]="av.porcentaje > 0 ? 'text-green-400' : av.porcentaje < 0 ? 'text-red-400' : 'text-[#888]'">
-                {{ av.porcentaje | percent:'1.2-2' }}
+              <p class="font-mono text-sm font-semibold"
+                [class]="strategy.porcentaje > 0 ? 'text-green-400' : strategy.porcentaje < 0 ? 'text-red-400' : 'text-[#888]'">
+                {{ strategy.porcentaje | percent:'1.2-2' }}
               </p>
             </div>
             <div>
               <p class="text-[#555] text-xs uppercase tracking-widest mb-1">G/P USDT</p>
-              <p class="font-mono text-sm font-semibold" [class]="av.gp > 0 ? 'text-green-400' : av.gp < 0 ? 'text-red-400' : 'text-[#888]'">
-                {{ av.gp | number:'1.2-2' }}
+              <p class="font-mono text-sm font-semibold"
+                [class]="strategy.gp > 0 ? 'text-green-400' : strategy.gp < 0 ? 'text-red-400' : 'text-[#888]'">
+                {{ strategy.gp | number:'1.2-2' }}
               </p>
             </div>
           </div>

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Av } from './av';
+import { CryptoPrice } from './crypto-price';
 
-describe('Av', () => {
-  let service: Av;
+describe('CryptoPrice', () => {
+  let service: CryptoPrice;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Av);
+    service = TestBed.inject(CryptoPrice);
   });
 
   it('should be created', () => {
