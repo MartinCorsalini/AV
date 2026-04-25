@@ -1,41 +1,50 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h1>◈ AV TRADING</h1>
-      <p>ETH SHORT DASHBOARD</p>
+<div class="login-bg min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-bold text-white tracking-tight">Tiseto Trades</h1>
+      <p class="text-[#666] text-sm mt-2 tracking-widest uppercase">Trading Dashboard</p>
     </div>
 
-    <div class="login-form">
-      <div class="field">
-        <label>EMAIL</label>
+    <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-8">
+      
+      <div class="mb-6">
+        <label class="block text-[#888] text-xs font-medium uppercase tracking-widest mb-2">Email</label>
         <input
-          pInputText
           type="email"
           [(ngModel)]="email"
           placeholder="tu@email.com"
+          class="input-field w-full bg-[#212121] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white text-sm placeholder-[#444] focus:outline-none transition-colors"
         />
       </div>
 
-      <div class="field">
-        <label>CONTRASEÑA</label>
-        <p-password
+      <div class="mb-8">
+        <label class="block text-[#888] text-xs font-medium uppercase tracking-widest mb-2">Contraseña</label>
+        <input
+          type="password"
           [(ngModel)]="password"
-          [feedback]="false"
-          [toggleMask]="true"
           placeholder="••••••••"
+          class="input-field w-full bg-[#212121] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white text-sm placeholder-[#444] focus:outline-none transition-colors"
         />
       </div>
 
       @if (error) {
-        <p-message severity="error" [text]="error" />
+        <div class="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl animate-pulse">
+          <p class="text-red-400 text-sm">{{ error }}</p>
+        </div>
       }
 
-      <p-button
-        label="INGRESAR"
-        [loading]="loading"
-        (onClick)="login()"
-        styleClass="w-full"
-      />
+      <button
+        (click)="login()"
+        [disabled]="loading"
+        class="btn-login w-full bg-white text-black font-semibold py-3 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+
     </div>
+
+    <p class="text-center text-[#444] text-xs mt-6">Tiseto Trades © 2026</p>
+
   </div>
 </div>

@@ -1,58 +1,104 @@
-<div class="dashboard-container">
+<div class="min-h-screen bg-[#0f0f0f]" style="background-image: radial-gradient(#2a2a2a 1px, transparent 1px); background-size: 24px 24px;">
 
-  <header class="dashboard-header">
-    <h1>◈ AV TRADING DASHBOARD</h1>
-    <div class="header-right">
-      <div class="eth-price" [class.up]="priceUp" [class.down]="!priceUp">
-        <span class="eth-label">ETH/USDT</span>
-        <span class="eth-value">{{ ethPrice | number:'1.2-2' }}</span>
-        <span class="eth-arrow">{{ priceUp ? '▲' : '▼' }}</span>
+  <!-- NAVBAR -->
+  <nav class="border-b border-[#2a2a2a] bg-[#0f0f0f]/80 backdrop-blur-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <span class="text-white font-bold text-lg tracking-tight">Tiseto Trades</span>
+          <span class="text-[#444] text-xs">|</span>
+          <span class="text-[#666] text-xs uppercase tracking-widest">Dashboard</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl px-4 py-2">
+            <span class="text-[#666] text-xs">ETH/USDT</span>
+            <span class="font-mono font-semibold text-sm" [class]="priceUp ? 'text-green-400' : 'text-red-400'">
+              {{ ethPrice | number:'1.2-2' }}
+            </span>
+            <span class="text-xs" [class]="priceUp ? 'text-green-400' : 'text-red-400'">
+              {{ priceUp ? '▲' : '▼' }}
+            </span>
+          </div>
+          <span class="text-[#666] text-sm">{{ nombreUsuario }}</span>
+          <button
+            (click)="logout()"
+            class="text-[#666] hover:text-white text-sm transition-colors px-3 py-2 rounded-lg hover:bg-[#1a1a1a]"
+          >
+            Salir
+          </button>
+        </div>
       </div>
-      <p-button label="SALIR" severity="danger" size="small" (onClick)="logout()" />
     </div>
-  </header>
+  </nav>
 
-  <div class="av-grid">
-    @for (av of avs; track av.id) {
-      <div class="av-card" (click)="goToAv(av.id)">
-        <div class="av-card-header">
-          <h2>{{ av.nombre }}</h2>
-          <span class="av-badge">ETH SHORT</span>
+  <!-- CONTENIDO -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="mb-8">
+      <h2 class="text-white text-2xl font-semibold">Estrategias activas</h2>
+      <p class="text-[#666] text-sm mt-1">Hacé clic en una tarjeta para ver el detalle</p>
+    </div>
+
+    <!-- CARDS AVs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (av of avs; track av.id) {
+        <div
+          (click)="goToAv(av.id)"
+          class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-6 cursor-pointer hover:border-[#3a3a3a] hover:bg-[#1f1f1f] transition-all duration-200 group"
+        >
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-white font-semibold text-lg">{{ av.nombre }}</h3>
+              <span class="text-[#666] text-xs uppercase tracking-widest">ETH Short</span>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
+              SHORT
+            </span>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <p class="text-[#555] text-xs uppercase tracking-widest mb-1">Capital</p>
+              <p class="text-white font-mono text-sm font-medium">{{ av.capital | number:'1.2-2' }} <span class="text-[#555] text-xs">USDT</span></p>
+            </div>
+            <div>
+              <p class="text-[#555] text-xs uppercase tracking-widest mb-1">Restante</p>
+              <p class="text-white font-mono text-sm font-medium">{{ av.capitalRestante | number:'1.2-2' }} <span class="text-[#555] text-xs">USDT</span></p>
+            </div>
+            <div>
+              <p class="text-[#555] text-xs uppercase tracking-widest mb-1">PPC</p>
+              <p class="text-white font-mono text-sm font-medium">{{ av.ppc | number:'1.2-2' }}</p>
+            </div>
+            <div>
+              <p class="text-[#555] text-xs uppercase tracking-widest mb-1">Balas</p>
+              <p class="text-white font-mono text-sm font-medium">{{ av.balasRestantes }}</p>
+            </div>
+          </div>
+
+          <!-- PnL -->
+          <div class="border-t border-[#2a2a2a] pt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-[#555] text-xs uppercase tracking-widest mb-1">% en curso</p>
+              <p class="font-mono text-sm font-semibold" [class]="av.porcentaje > 0 ? 'text-green-400' : av.porcentaje < 0 ? 'text-red-400' : 'text-[#888]'">
+                {{ av.porcentaje | percent:'1.2-2' }}
+              </p>
+            </div>
+            <div>
+              <p class="text-[#555] text-xs uppercase tracking-widest mb-1">G/P USDT</p>
+              <p class="font-mono text-sm font-semibold" [class]="av.gp > 0 ? 'text-green-400' : av.gp < 0 ? 'text-red-400' : 'text-[#888]'">
+                {{ av.gp | number:'1.2-2' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 text-right">
+            <span class="text-[#444] text-xs group-hover:text-[#666] transition-colors">Ver detalle →</span>
+          </div>
         </div>
+      }
+    </div>
 
-        <div class="av-stats">
-          <div class="stat">
-            <span class="stat-label">CAPITAL</span>
-            <span class="stat-value">{{ av.capital | number:'1.2-2' }} USDT</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">CAPITAL RESTANTE</span>
-            <span class="stat-value">{{ av.capitalRestante | number:'1.2-2' }} USDT</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">PPC</span>
-            <span class="stat-value">{{ av.ppc | number:'1.2-2' }}</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">BALAS RESTANTES</span>
-            <span class="stat-value">{{ av.balasRestantes }}</span>
-          </div>
-        </div>
-
-        <div class="av-footer">
-          <div class="pnl" [class]="getPortcentajeClass(av.porcentaje)">
-            <span class="pnl-label">% EN CURSO</span>
-            <span class="pnl-value">{{ av.porcentaje | percent:'1.2-2' }}</span>
-          </div>
-          <div class="pnl" [class]="getPortcentajeClass(av.gp)">
-            <span class="pnl-label">G/P USDT</span>
-            <span class="pnl-value">{{ av.gp | number:'1.2-2' }}</span>
-          </div>
-        </div>
-
-        <div class="av-click-hint">VER DETALLE →</div>
-      </div>
-    }
   </div>
-
 </div>
